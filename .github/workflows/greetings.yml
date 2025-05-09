@@ -32,7 +32,7 @@ jobs:
 
       # Step to send a greeting message for issues and pull requests
       - name: First Interaction
-        uses: actions/first-interaction@v1.3.0 # v1.3.0
+        uses: actions/first-interaction@34f15e814fe48ac9312ccf29db4e74fa767cbab7 # v1.3.0
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }} # Use the repository token for authentication
           issue-message: "Greetings, thanks for opening an issue, I'll look when I can." # Message for new issues

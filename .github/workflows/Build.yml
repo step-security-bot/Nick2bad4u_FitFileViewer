@@ -19,8 +19,13 @@ jobs:
     outputs:
       new_version: ${{ steps.bump.outputs.new_version }}
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
+        with:
+          egress-policy: audit
+
       - name: Checkout code
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         continue-on-error: true
 
       - name: Debug Step - Show git diff for electron-app
@@ -66,7 +71,7 @@ jobs:
         continue-on-error: true
 
       - name: Commit and push version bump
-        uses: EndBug/add-and-commit@v9.1.4
+        uses: EndBug/add-and-commit@a94899bca583c204427a224a7af87c02f9b325d5 # v9.1.4
         with:
           message: "Bump version to ${{ steps.bump.outputs.new_version }}"
           add: "package.json"
@@ -76,7 +81,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload bumped package.json
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: bumped-package-json
           path: electron-app/package.json
@@ -104,19 +109,24 @@ jobs:
         working-directory: electron-app
 
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
+        with:
+          egress-policy: audit
+
       - name: Checkout code
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         continue-on-error: true
 
       - name: Download bumped package.json
-        uses: actions/download-artifact@v4.3.0
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: bumped-package-json
           path: ./electron-app
         continue-on-error: true
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4.4.0
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 20
         continue-on-error: true
@@ -147,7 +157,7 @@ jobs:
 
       - name: Cache node modules (Windows)
         if: runner.os == 'Windows'
-        uses: actions/cache@v4.2.3
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
           path: |
             ~\AppData\Local\npm-cache
@@ -160,7 +170,7 @@ jobs:
 
       - name: Cache node modules (non-Windows)
         if: runner.os != 'Windows'
-        uses: actions/cache@v4.2.3
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -221,7 +231,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload distributable files as artifact
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: dist-${{ matrix.os }}-${{ matrix.arch }}
           path: |
@@ -234,11 +244,16 @@ jobs:
     needs: [build, bump-version]
     runs-on: ubuntu-latest
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
+        with:
+          egress-policy: audit
+
       - name: Checkout code
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Download all build artifacts
-        uses: actions/download-artifact@v4.3.0
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           path: ./artifacts
 
@@ -424,7 +439,7 @@ jobs:
           done
 
       - name: Create or update release with distributable builds
-        uses: softprops/action-gh-release@v2.2.2
+        uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631 # v2.2.2
         with:
           tag_name: v${{ needs.bump-version.outputs.new_version }}
           name: FitFileViewer v${{ needs.bump-version.outputs.new_version }}
